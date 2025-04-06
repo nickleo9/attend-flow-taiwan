@@ -15,6 +15,7 @@ import {
 import { Clock, LogIn, LogOut } from "lucide-react";
 import { format } from "date-fns";
 import { useAttendance } from "@/contexts/AttendanceContext";
+import { ExportButton, AttendanceRecord } from "@/components/ExportButton";
 
 export default function ClockInOut() {
   const { clockedIn, clockInTime, clockOutTime, handleClockIn, handleClockOut } = useAttendance();
@@ -30,7 +31,7 @@ export default function ClockInOut() {
   }, []);
 
   // 假設的過去打卡紀錄
-  const clockHistory = [
+  const clockHistory: AttendanceRecord[] = [
     { date: "2025-04-05", clockIn: "09:05:22", clockOut: "18:15:45", status: "正常" },
     { date: "2025-04-04", clockIn: "08:55:10", clockOut: "18:10:30", status: "正常" },
     { date: "2025-04-03", clockIn: "09:10:05", clockOut: "18:30:15", status: "遲到" },
@@ -109,7 +110,10 @@ export default function ClockInOut() {
           
           <Separator className="my-8" />
           
-          <h2 className="text-2xl font-bold mb-4">打卡記錄</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">打卡記錄</h2>
+            <ExportButton data={clockHistory} fileName="出勤記錄" />
+          </div>
           
           <Card>
             <CardContent className="p-0">
@@ -120,21 +124,38 @@ export default function ClockInOut() {
                     <TableHead>上班時間</TableHead>
                     <TableHead>下班時間</TableHead>
                     <TableHead>狀態</TableHead>
+                    <TableHead>工作時數</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {clockHistory.map((record) => (
-                    <TableRow key={record.date}>
-                      <TableCell>{record.date}</TableCell>
-                      <TableCell>{record.clockIn}</TableCell>
-                      <TableCell>{record.clockOut}</TableCell>
-                      <TableCell>
-                        <span className={record.status === "正常" ? "text-green-600" : "text-amber-600"}>
-                          {record.status}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {clockHistory.map((record) => {
+                    // 計算工作時數
+                    let hours = "-";
+                    if (record.clockIn && record.clockOut) {
+                      const [inHour, inMin] = record.clockIn.split(':').map(Number);
+                      const [outHour, outMin] = record.clockOut.split(':').map(Number);
+                      
+                      const inMinutes = inHour * 60 + inMin;
+                      const outMinutes = outHour * 60 + outMin;
+                      
+                      const hoursDiff = ((outMinutes - inMinutes) / 60);
+                      hours = hoursDiff.toFixed(1);
+                    }
+                    
+                    return (
+                      <TableRow key={record.date}>
+                        <TableCell>{record.date}</TableCell>
+                        <TableCell>{record.clockIn}</TableCell>
+                        <TableCell>{record.clockOut}</TableCell>
+                        <TableCell>
+                          <span className={record.status === "正常" ? "text-green-600" : "text-amber-600"}>
+                            {record.status}
+                          </span>
+                        </TableCell>
+                        <TableCell>{hours}</TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>

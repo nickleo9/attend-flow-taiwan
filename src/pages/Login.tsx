@@ -1,19 +1,19 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { Lock, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +21,7 @@ export default function Login() {
     // 簡單的模擬登入邏輯
     if (username === "admin" && password === "admin123") {
       // 管理員登入
-      localStorage.setItem("userRole", "admin");
-      localStorage.setItem("userName", "系統管理員");
-      localStorage.setItem("isLoggedIn", "true");
+      login("admin", "系統管理員");
       
       toast({
         title: "登入成功",
@@ -33,9 +31,7 @@ export default function Login() {
       navigate("/dashboard");
     } else if (username === "user" && password === "user123") {
       // 員工登入
-      localStorage.setItem("userRole", "employee");
-      localStorage.setItem("userName", "王小明");
-      localStorage.setItem("isLoggedIn", "true");
+      login("employee", "王小明");
       
       toast({
         title: "登入成功",

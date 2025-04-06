@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
+import { ExportButton } from "@/components/ExportButton";
 
 type LeaveStatus = "approved" | "pending" | "rejected";
 
@@ -83,6 +84,20 @@ export default function LeaveRequests() {
     },
   ];
 
+  // 將請假資料轉換為可導出的格式
+  const exportData = leaveRequests.map(request => ({
+    date: request.appliedDate,
+    type: request.type,
+    startDate: request.startDate,
+    endDate: request.endDate,
+    days: request.days,
+    reason: request.reason,
+    status: request.status === "approved" ? "已核准" : 
+            request.status === "pending" ? "待核准" : "已拒絕",
+    clockIn: "-",
+    clockOut: "-"
+  }));
+
   const getStatusBadge = (status: LeaveStatus) => {
     switch (status) {
       case "approved":
@@ -115,6 +130,10 @@ export default function LeaveRequests() {
             </TabsContent>
             
             <TabsContent value="history" className="mt-6">
+              <div className="flex justify-end mb-4">
+                <ExportButton data={exportData} fileName="請假記錄" />
+              </div>
+              
               <Card>
                 <CardContent className="p-0">
                   <Table>
