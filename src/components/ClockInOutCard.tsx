@@ -1,38 +1,23 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, LogIn, LogOut } from "lucide-react";
 import { format } from "date-fns";
-import { useToast } from "@/components/ui/use-toast";
+import { useAttendance } from "@/contexts/AttendanceContext";
+import { useState, useEffect } from "react";
 
 export function ClockInOutCard() {
-  const [clockedIn, setClockedIn] = useState(false);
-  const [clockInTime, setClockInTime] = useState<string | null>(null);
-  const [clockOutTime, setClockOutTime] = useState<string | null>(null);
-  const { toast } = useToast();
+  const { clockedIn, clockInTime, clockOutTime, handleClockIn, handleClockOut } = useAttendance();
+  const [currentTime, setCurrentTime] = useState<string>(format(new Date(), "HH:mm:ss"));
 
-  const handleClockIn = () => {
-    const now = new Date();
-    setClockInTime(format(now, "HH:mm:ss"));
-    setClockedIn(true);
+  // 更新當前時間
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(format(new Date(), "HH:mm:ss"));
+    }, 1000);
     
-    toast({
-      title: "成功打卡上班",
-      description: `時間：${format(now, "yyyy-MM-dd HH:mm:ss")}`,
-    });
-  };
-
-  const handleClockOut = () => {
-    const now = new Date();
-    setClockOutTime(format(now, "HH:mm:ss"));
-    setClockedIn(false);
-    
-    toast({
-      title: "成功打卡下班",
-      description: `時間：${format(now, "yyyy-MM-dd HH:mm:ss")}`,
-    });
-  };
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Card className="h-full">
@@ -44,7 +29,7 @@ export function ClockInOutCard() {
       </CardHeader>
       <CardContent className="flex flex-col items-center space-y-6">
         <div className="text-4xl font-bold">
-          {format(new Date(), "HH:mm:ss")}
+          {currentTime}
         </div>
         
         <div className="flex flex-col w-full space-y-4">

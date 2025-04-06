@@ -10,9 +10,12 @@ import {
   Briefcase, 
   FileText,
   Menu, 
-  ChevronLeft
+  ChevronLeft,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 const navItems = [
   { 
@@ -46,6 +49,12 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout, userName, userRole } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div 
@@ -89,22 +98,33 @@ export function Sidebar() {
         </nav>
       </div>
 
-      <div className="p-4">
-        <div className="flex items-center gap-3 text-sm">
-          {!collapsed && (
+      <div className="p-4 space-y-2">
+        <Separator />
+        <div className="flex items-center gap-3 text-sm pt-2">
+          {!collapsed ? (
             <>
               <div className="w-8 h-8 rounded-full bg-brand-200 flex items-center justify-center text-brand-800 font-bold">
-                王
+                {userName?.charAt(0) || "用"}
               </div>
-              <div>
-                <p className="font-medium">王小明</p>
-                <p className="text-xs text-muted-foreground">員工</p>
+              <div className="flex-1">
+                <p className="font-medium">{userName || "用戶"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {userRole === "admin" ? "系統管理員" : "員工"}
+                </p>
               </div>
+              {userRole === "employee" && <ChangePasswordDialog />}
+              <Button variant="ghost" size="icon" onClick={handleLogout} title="登出">
+                <LogOut size={18} />
+              </Button>
             </>
-          )}
-          {collapsed && (
-            <div className="w-8 h-8 rounded-full bg-brand-200 flex items-center justify-center text-brand-800 font-bold mx-auto">
-              王
+          ) : (
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-8 h-8 rounded-full bg-brand-200 flex items-center justify-center text-brand-800 font-bold">
+                {userName?.charAt(0) || "用"}
+              </div>
+              <Button variant="ghost" size="icon" onClick={handleLogout} title="登出">
+                <LogOut size={18} />
+              </Button>
             </div>
           )}
         </div>
