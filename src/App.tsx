@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,66 +17,69 @@ import BusinessTrips from "./pages/BusinessTrips";
 import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 
+// Create a new QueryClient instance outside of component rendering
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <AttendanceProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/clock" 
-                element={
-                  <ProtectedRoute>
-                    <ClockInOut />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/leave" 
-                element={
-                  <ProtectedRoute>
-                    <LeaveRequests />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/business-trip" 
-                element={
-                  <ProtectedRoute>
-                    <BusinessTrips />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/calendar" 
-                element={
-                  <ProtectedRoute>
-                    <Calendar />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AttendanceProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AttendanceProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/clock" 
+                  element={
+                    <ProtectedRoute>
+                      <ClockInOut />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/leave" 
+                  element={
+                    <ProtectedRoute>
+                      <LeaveRequests />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/business-trip" 
+                  element={
+                    <ProtectedRoute>
+                      <BusinessTrips />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/calendar" 
+                  element={
+                    <ProtectedRoute>
+                      <Calendar />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AttendanceProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </React.StrictMode>
 );
 
 export default App;
